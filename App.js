@@ -1,35 +1,58 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Image } from 'react-native';
-import Header from "./components/Header"
+import { StyleSheet, Text, View, FlatList } from 'react-native';
+import { useState } from "react";
+
+import Item from "./components/Item"
+import AddItem from './components/AddItem';
 
 export default function App() {
+
+  const [counter,setCounter] = useState(3)
+
+  const [items, setItems] = useState([
+    {id:0,title:'Oranges'},
+    {id:1,title:'Bananas'},
+    {id:2,title:'Milk'},
+  ])
+
+  function deleteItem(id){
+    setItems(items.filter(item => item.id !== id))
+  }
+
+  function addItem(title){
+    const newItems = [...items, {id: counter, title:title}]
+    setItems(newItems)
+    setCounter(counter + 1)
+  }
+
   return (
-    <View style={styles.view}>
-      <Header title={"My website"}/>
-      <Text style={styles.text}>Hello world!</Text>
-      <Image source={{uri:"https://randomuser.me/portraits/men/1.jpg"}} style={styles.img} />
+    <View style={styles.headerText}>
+      <Text style={[styles.headerText, styles.fontStyle]}>Shopping list</Text>
+
+      <AddItem addItem={addItem} />
+
+      {/* flatlist mapping */}
+      <FlatList data={items} renderItem={({item})=> {
+        return (
+          <Item itemStyle={styles.item} data={item} deleteItem={deleteItem} />
+        )
+      }} />
+
+
     </View>
   );
 }
 
-Header.defaultProps ={
-  title:"No title"
-}
-
 
 const styles = StyleSheet.create({
-  view:{
-    flex:1,
-    alignItems:'center',
-    justifyContent:"center"
+  headerText:{
+    textAlign:'center',
+    marginTop:60,
   },
-  text:{
-    color:"darkslateblue",
+  fontStyle:{
     fontSize:30
   },
-  img:{
-    width:100,
-    height:100,
-    borderRadius:100/2 // !!!
+  item:{
+    fontSize:25,
   }
+
 })
